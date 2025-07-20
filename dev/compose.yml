@@ -16,6 +16,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./dev/init:/docker-entrypoint-initdb.d
 
   # ---------------------------------------------------------------------------
   # Temporal all-in-one (server + UI) – suitable for local dev only
@@ -28,10 +29,10 @@ services:
       - DB=postgresql
       - DB_PORT=5432
       - DB_HOST=postgres
-      - DB_USER=postgres
-      - DB_PWD=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PWD=postgres
+      - DB_USER=temporal
+      - DB_PWD=temporal
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
       - POSTGRES_SEEDS=postgres
     depends_on:
       - postgres
