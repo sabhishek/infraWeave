@@ -30,6 +30,8 @@ services:
       - DB_HOST=postgres
       - DB_USER=postgres
       - DB_PWD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
       - POSTGRES_SEEDS=postgres
     depends_on:
       - postgres
