@@ -17,7 +17,6 @@ settings = get_settings()
 
 @activity.defn
 async def render_and_commit(
-    *,
     template_name: str,
     context: Dict[str, object],
     repo_category: str,
