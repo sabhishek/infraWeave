@@ -6,7 +6,9 @@ import asyncio
 import logging
 
 # Disable workflow sandbox for local dev to allow non-deterministic libs (e.g., GitPython)
-os.environ.setdefault("TEMPORAL_PYTHON_DISABLE_SANDBOX", "1")
+import temporalio.worker.workflow_sandbox as sandbox
+# Allow GitPython (and its subprocess usage) inside sandbox during module import scan
+sandbox.allow_module("git")
 
 from temporalio.client import Client
 from temporalio.worker import Worker
