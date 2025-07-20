@@ -13,7 +13,6 @@ import textwrap
 from pathlib import Path
 from typing import Optional
 
-from git import Repo  # type: ignore[import-not-found]
 
 from ..config import get_settings
 
@@ -47,6 +46,9 @@ async def commit_change(
     logger.debug("Cloning %s into %s", repo_url, workdir)
 
     try:
+        # Import GitPython lazily to avoid loading it during workflow sandbox initialization
+        from git import Repo  # type: ignore[import-not-found]
+
         repo = Repo.clone_from(repo_url, workdir, env=_git_env())
         # Ensure we're on main
         if repo.head.is_detached:
