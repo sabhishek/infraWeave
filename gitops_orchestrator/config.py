@@ -11,7 +11,8 @@ import os
 from functools import lru_cache
 from typing import Dict, Literal, Optional
 
-from pydantic import BaseSettings, Field, ValidationError, computed_field
+from pydantic import Field, ValidationError, computed_field
+from pydantic_settings import BaseSettings
 
 
 class AppSettings(BaseSettings):
