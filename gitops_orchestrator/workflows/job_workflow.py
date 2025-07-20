@@ -8,7 +8,6 @@ from temporalio import workflow
 
 
 from ..config import get_settings
-from ..dispatcher import get_handler_class
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -35,6 +34,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         logger.info("[WF] Starting job %s (%s)", job_id, category)
 
         # Instantiate handler (no DB session in workflow context; heavy logic in activities)
+        from ..dispatcher import get_handler_class  # lazy import to avoid sandbox issues
         HandlerCls = get_handler_class(category)
         handler_name = HandlerCls.__name__
 
