@@ -9,8 +9,8 @@ services:
     container_name: orchestrator-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
       POSTGRES_DB: gitops_orchestrator
     ports:
       - "5432:5432"
@@ -28,8 +28,8 @@ services:
       - DB=postgresql
       - DB_PORT=5432
       - DB_HOST=postgres
-      - DB_USER=postgres
-      - DB_PWD=postgres
+      - DB_USER=temporal
+      - DB_PWD=temporal
       - POSTGRES_SEEDS=postgres
     depends_on:
       - postgres
