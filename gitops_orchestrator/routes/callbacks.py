@@ -4,7 +4,7 @@ from __future__ import annotations
 import uuid
 from typing import Dict
 
-from fastapi import APIRouter, HTTPException, Path, status
+from fastapi import APIRouter, HTTPException, Path, status, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db.session import get_async_session
