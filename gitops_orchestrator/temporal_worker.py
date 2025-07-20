@@ -5,12 +5,10 @@ import os
 import asyncio
 import logging
 
-# Disable workflow sandbox for local dev (GitPython spawns subprocesses)
+# Disable workflow sandbox entirely for local dev (Temporal SDK 1.3)
 os.environ.setdefault("TEMPORAL_PYTHON_DISABLE_SANDBOX", "1")
 
-import temporalio.worker.workflow_sandbox as sandbox
-for _mod in ("git", "git.cmd", "git.util"):
-    sandbox.pass_through_module(_mod)
+
 
 from temporalio.client import Client
 from temporalio.worker import Worker
