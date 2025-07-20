@@ -27,13 +27,15 @@ services:
     restart: unless-stopped
     environment:
       - DB=postgresql
+      - POSTGRES_USER=postgres
+      - POSTGRES_PWD=postgres
+      - POSTGRES_SEEDS=postgres
       - DB_PORT=5432
-      - DB_HOST=postgres
-      - DB_USER=postgres
-      - DB_PWD=postgres
-      - DB_DATABASE=gitops_orchestrator
+      - DB_DATABASE=postgres
+      - TEMPORAL_CLI_ADDRESS=temporal:7233
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "7233:7233"   # gRPC (SDKs)
       - "8233:8233"   # HTTP
