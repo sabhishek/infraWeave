@@ -44,7 +44,20 @@ services:
     ports:
       - "7233:7233"   # gRPC (SDKs)
       - "8233:8233"   # HTTP
-      - "8080:8080"   # UI
+
+
+  temporal-ui:
+    image: temporalio/ui:2.16.2
+    container_name: orchestrator-temporal-ui
+    restart: unless-stopped
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_UI_PORT=8080
+    depends_on:
+      temporal:
+        condition: service_started
+    ports:
+      - "8080:8080"
 
 volumes:
   postgres-data:
