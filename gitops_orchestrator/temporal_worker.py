@@ -1,8 +1,12 @@
 """Bootstrap Temporal worker for GitOps orchestrator."""
 from __future__ import annotations
 
+import os
 import asyncio
 import logging
+
+# Disable workflow sandbox for local dev to allow non-deterministic libs (e.g., GitPython)
+os.environ.setdefault("TEMPORAL_PYTHON_DISABLE_SANDBOX", "1")
 
 from temporalio.client import Client
 from temporalio.worker import Worker
