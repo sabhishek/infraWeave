@@ -33,7 +33,7 @@ async def post_callback(
         job_id=job.id,
         status=job.status,
         message=payload.get("external_id"),
-        metadata=payload.get("metadata"),
+        extra_metadata=payload.get("metadata"),
     )
     db.add(history)
     await db.commit()

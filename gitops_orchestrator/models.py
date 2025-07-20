@@ -106,7 +106,7 @@ class JobHistory(Base):
     status: Mapped[JobStatus] = mapped_column(Enum(JobStatus, name="job_status_history"))
     timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     message: Mapped[Optional[str]] = mapped_column(Text)
-    metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON)
+    extra_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON)  # renamed from 'metadata' to avoid SQLAlchemy reserved name
 
     job: Mapped["Job"] = relationship(back_populates="history")
 
@@ -172,7 +172,7 @@ class JobHistorySchema(BaseModel):
     status: JobStatus
     timestamp: datetime
     message: Optional[str]
-    metadata: Optional[Dict[str, Any]]
+    extra_metadata: Optional[Dict[str, Any]]
 
     class Config:
         from_attributes = True
