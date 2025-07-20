@@ -17,8 +17,8 @@ router = APIRouter(prefix="/tenants/{tenant_id}/callbacks", tags=["callbacks"])
 async def post_callback(
     tenant_id: uuid.UUID,
     job_id: uuid.UUID = Path(...),
-    payload: Dict[str, object] = None,
-    db: AsyncSession = get_async_session(),
+    payload: Dict[str, object] | None = None,
+    db: AsyncSession = Depends(get_async_session),
 ):  # noqa: D401
     job = await db.get(Job, job_id)
     if not job or job.tenant_id != tenant_id:
