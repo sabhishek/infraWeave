@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL – state DB
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:15-alpine
+    container_name: orchestrator-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gitops_orchestrator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # ---------------------------------------------------------------------------
+  # Temporal all-in-one (server + UI) – suitable for local dev only
+  # ---------------------------------------------------------------------------
+  temporal:
+    image: temporalio/auto-setup:1.22.3
+    container_name: orchestrator-temporal
+    restart: unless-stopped
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PWD=postgres
+      - POSTGRES_SEEDS=postgres
+    depends_on:
+      - postgres
+    ports:
+      - "7233:7233"   # gRPC (SDKs)
+      - "8233:8233"   # HTTP / health
+      - "8080:8080"   # UI
+
+volumes:
+  postgres-data:
+    driver: local

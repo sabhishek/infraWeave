@@ -139,8 +139,4 @@ Pull requests welcome! Please adhere to the coding standards:
 * Write unit tests (`pytest`) and, where possible, Temporal workflow tests.
 * Run `ruff` & `black` before pushing.
 
----
 
-## License
-
-Apache-2.0 © 2025 Windsurf Engineering
