@@ -10,7 +10,6 @@ from temporalio import workflow
 from ..config import get_settings
 
 logger = logging.getLogger(__name__)
-settings = get_settings()
 
 
 @workflow.defn
@@ -32,6 +31,9 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
     ) -> str:
         self._job_id = job_id
         logger.info("[WF] Starting job %s (%s)", job_id, category)
+
+        # Lazy load settings inside workflow run to avoid sandbox Path operations
+        settings = get_settings()
 
         # Instantiate handler (no DB session in workflow context; heavy logic in activities)
         from ..dispatcher import get_handler_class  # lazy import to avoid sandbox issues
