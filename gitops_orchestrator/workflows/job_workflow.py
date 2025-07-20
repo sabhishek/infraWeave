@@ -6,9 +6,7 @@ from typing import Dict, Optional
 
 from temporalio import workflow
 
-from ..activities import apis as apis_act
-from ..activities import gitops as gitops_act
-from ..activities import monitoring as mon_act
+
 from ..config import get_settings
 from ..dispatcher import get_handler_class
 
@@ -49,9 +47,14 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
             schedule_to_close_timeout=60,
         )
 
-        # Pre-checks could be synchronous quick validation; we call via activity for isolation
+        # Import activities lazily to avoid loading non-deterministic libs during sandbox import
+        from ..activities import apis as apis_act
+        from ..activities import gitops as gitops_act
+        from ..activities import monitoring as mon_act
+
+        # Pre-checks via API activity
         await workflow.execute_activity(
-            apis_act.call_external_api,  # reusing API activity as generic check stub
+            apis_act.call_external_api,
             "pre_checks",
             {"category": category, "payload": payload},
             schedule_to_close_timeout=60,
