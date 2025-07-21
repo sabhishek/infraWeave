@@ -3,12 +3,11 @@ from __future__ import annotations
 
 from typing import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import (
-    AsyncEngine,
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+try:
+    from sqlalchemy.ext.asyncio import async_sessionmaker  # SQLAlchemy >=2.0
+except ImportError:  # fallback for older versions
+    from sqlalchemy.orm import sessionmaker as async_sessionmaker
 from sqlalchemy.orm import declarative_base
 
 from ..config import get_settings
