@@ -7,7 +7,6 @@ from typing import Any, Dict, List
 from fastapi import APIRouter, Depends, HTTPException, Path, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from temporalio.client import Client
 
 from ..db.session import get_async_session
 from ..models import Job, JobCreateSchema, JobSchema, Resource, ResourceCategory, ResourceCreateSchema, ResourceSchema
@@ -18,13 +17,19 @@ router = APIRouter(prefix="/tenants/{tenant_id}/resources", tags=["resources"])
 
 async def _start_job(
     *,
-    temporal: Client,
     db: AsyncSession,
     tenant_id: uuid.UUID,
     category: str,
     job_type: str,
     payload: Dict[str, Any],
 ) -> Job:
+    # Lazy import Temporal client and JobWorkflow when needed
+    from temporalio.client import Client
+    from ..workflows.job_workflow import JobWorkflow
+    from ..main import get_temporal_client
+
+    temporal: Client = await get_temporal_client()
+
     # Persist job row
     job = Job(
         tenant_id=tenant_id,
@@ -59,7 +64,6 @@ async def create_resource(
     tenant_id: uuid.UUID,
     category: ResourceCategory = Path(..., description="Resource category"),
     body: ResourceCreateSchema = Depends(),
-    temporal: Client = Depends(),
     db: AsyncSession = Depends(get_async_session),
 ):
     job = await _start_job(
