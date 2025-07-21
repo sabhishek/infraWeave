@@ -7,11 +7,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from temporalio.client import Client
-
 from ..db.session import get_async_session
 from ..models import Job, JobSchema, JobStatus
-from ..workflows.job_workflow import JobWorkflow
 
 router = APIRouter(prefix="/tenants/{tenant_id}/jobs", tags=["jobs"])
 
@@ -35,7 +32,6 @@ async def get_job(tenant_id: uuid.UUID, job_id: uuid.UUID, db: AsyncSession = De
 async def retry_job(
     tenant_id: uuid.UUID,
     job_id: uuid.UUID,
-    temporal: Client = Depends(),
     db: AsyncSession = Depends(get_async_session),
 ):  # noqa: D401
     job = await db.get(Job, job_id)
@@ -45,6 +41,12 @@ async def retry_job(
         raise HTTPException(status_code=400, detail="Only failed jobs can be retried")
 
     # Restart workflow with same parameters
+    # Lazy import Temporal client and JobWorkflow to avoid sandbox issues
+    from temporalio.client import Client
+    from ..workflows.job_workflow import JobWorkflow
+    from ..main import get_temporal_client
+
+    temporal: Client = await get_temporal_client()
     await temporal.start_workflow(
         JobWorkflow.run,
         id=str(uuid.uuid4()),  # new workflow ID
