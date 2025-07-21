@@ -23,7 +23,7 @@ alembic upgrade head  # migrations TBD
 python gitops_orchestrator/temporal_worker.py
 
 # 5. Launch FastAPI server
-uvicorn gitops_orchestrator.main:app --reload
+uvicorn gitops_orchestrator.main:app --reload --host 0.0.0.0
 ```
 
 Open http://localhost:8000/docs for interactive Swagger UI.
