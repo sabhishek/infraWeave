@@ -79,6 +79,13 @@ class AppSettings(BaseSettings):
     #     "misc": "git@github.com:acme-org/misc-resources.git"}'
     resource_repo_map_json: Optional[str] = Field(None, env="RESOURCE_REPO_MAP_JSON")
 
+    # Template repositories per resource category
+    template_repo_map_json: Optional[str] = Field(None, env="TEMPLATE_REPO_MAP_JSON")
+
+    # External VM provider API
+    vm_api_base: str = Field("", env="VM_API_BASE")
+    vm_api_token: str = Field("", env="VM_API_TOKEN")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
@@ -110,6 +117,23 @@ class AppSettings(BaseSettings):
                 "msg": "Invalid JSON for RESOURCE_REPO_MAP_JSON",
                 "type": "value_error.jsondecode",
             }]) from exc
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def template_repo_map(self) -> Dict[str, str]:
+        """Parse :pyattr:`template_repo_map_json` into a real dict."""
+        if not self.template_repo_map_json:
+            return {}
+        try:
+            return json.loads(self.template_repo_map_json)
+        except (TypeError, json.JSONDecodeError) as exc:
+            raise ValidationError([
+                {
+                    "loc": ("TEMPLATE_REPO_MAP_JSON",),
+                    "msg": "Invalid JSON for TEMPLATE_REPO_MAP_JSON",
+                    "type": "value_error.jsondecode",
+                }
+            ]) from exc
 
 
 @lru_cache()
