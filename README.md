@@ -20,7 +20,7 @@ docker compose -f dev/compose.yml up -d
 alembic upgrade head  # migrations TBD
 
 # 4. Start Temporal worker (in a new shell)
-python gitops_orchestrator/temporal_worker.py
+python -m gitops_orchestrator.temporal_worker
 
 # 5. Launch FastAPI server
 uvicorn gitops_orchestrator.main:app --reload --host 0.0.0.0
