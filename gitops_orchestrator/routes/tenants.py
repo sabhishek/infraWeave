@@ -4,6 +4,7 @@ from __future__ import annotations
 from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..db.session import get_async_session
@@ -23,7 +24,7 @@ async def create_tenant(name: str, db: AsyncSession = Depends(get_async_session)
 
 @router.get("", response_model=list[TenantSchema])
 async def list_tenants(db: AsyncSession = Depends(get_async_session)) -> list[TenantSchema]:  # noqa: D401
-    tenants = (await db.execute(Tenant.__table__.select())).scalars().all()
+    tenants = (await db.execute(select(Tenant))).scalars().all()
     return [TenantSchema.model_validate(t) for t in tenants]
 
 
