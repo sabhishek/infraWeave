@@ -47,14 +47,11 @@ async def _start_job(
         JobWorkflow.run,
         id=str(job.id),
         task_queue="gitops-jobs",
-        args=[],
-        kwargs={
-            "job_id": str(job.id),
-            "tenant_id": str(tenant_id),
-            "category": category,
-            "job_type": job_type,
-            "payload": payload,
-        },
+        job_id=str(job.id),
+        tenant_id=str(tenant_id),
+        category=category,
+        job_type=job_type,
+        payload=payload,
     )
     return job
 
