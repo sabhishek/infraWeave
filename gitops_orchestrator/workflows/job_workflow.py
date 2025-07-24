@@ -32,11 +32,13 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         self._job_id = job_id
         logger.info("[WF] Starting job %s (%s)", job_id, category)
 
-        # Lazy load settings inside workflow run to avoid sandbox Path operations
-        settings = get_settings()
-
-        # Instantiate handler (no DB session in workflow context; heavy logic in activities)
+        # Import activities lazily to avoid sandbox issues
+        from ..activities import monitoring as mon_act
+        from ..activities import apis as apis_act
+        from ..activities import gitops as gitops_act
         from ..dispatcher import get_handler_class  # lazy import to avoid sandbox issues
+
+        # Instantiate handler (meta only)
         HandlerCls = get_handler_class(category)
         handler_name = HandlerCls.__name__
 
@@ -48,11 +50,6 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
             message=f"Handler: {handler_name}",
             schedule_to_close_timeout=60,
         )
-
-        # Import activities lazily to avoid loading non-deterministic libs during sandbox import
-        from ..activities import apis as apis_act
-        from ..activities import gitops as gitops_act
-        from ..activities import monitoring as mon_act
 
         # Pre-checks via API activity
         await workflow.execute_activity(
