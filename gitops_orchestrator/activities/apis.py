@@ -21,3 +21,15 @@ async def call_external_api(api_name: str, payload: Any) -> Optional[dict]:
     logger.info("[API] Pretending to call %s with payload %s", api_name, payload)
     # Fake response
     return {"status": "ok", "api": api_name}
+
+
+@activity.defn
+async def lookup_tenant_name(tenant_id: str) -> str:  # noqa: D401
+    """Return human-friendly tenant name for *tenant_id*.
+
+    In real deployment this would query an internal service/DB. For now we just
+    return the ID unchanged so templates/path remain deterministic.
+    """
+    logger.info("[API] Looking up name for tenant %s", tenant_id)
+    # TODO: replace with real lookup
+    return tenant_id

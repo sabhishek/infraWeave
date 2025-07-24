@@ -27,6 +27,11 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
     ) -> str:
         job_id = params["job_id"]
         tenant_id = params["tenant_id"]
+        tenant_name = await workflow.execute_activity(
+            apis_act.lookup_tenant_name,
+            args=[tenant_id],
+            schedule_to_close_timeout=timedelta(seconds=30),
+        )
         category = params["category"]
         job_type = params["job_type"]
         payload = params["payload"]
@@ -61,7 +66,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
                     f"{category}.yaml.j2",
                     {"vm": {"name": params.get("name", payload.get("name", "resource")), **payload}},
                     category,
-                    f"{tenant_id}/{payload.get('name', 'resource')}.yaml",
+                    f"{tenant_name}/{category.split('/')[-1]}/{payload.get('name', 'resource')}.yaml",
                     None,
                 ],
                 schedule_to_close_timeout=timedelta(seconds=300),
