@@ -22,13 +22,13 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
     @workflow.run
     async def run(
         self,
-        *,
-        job_id: str,
-        tenant_id: str,
-        category: str,
-        job_type: str,
-        payload: Dict[str, object],
+        params: Dict[str, object],
     ) -> str:
+        job_id = params["job_id"]
+        tenant_id = params["tenant_id"]
+        category = params["category"]
+        job_type = params["job_type"]
+        payload = params["payload"]
         self._job_id = job_id
         logger.info("[WF] Starting job %s (%s)", job_id, category)
 
