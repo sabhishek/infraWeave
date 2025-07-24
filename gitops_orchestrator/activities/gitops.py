@@ -14,7 +14,7 @@ from temporalio import activity
 logger = logging.getLogger(__name__)
 
 
-@activity.defn
+@activity.defn(name="gitops_orchestrator.activities.gitops.render_and_commit")
 async def render_and_commit(
     template_name: str,
     context: Dict[str, Any],
