@@ -40,11 +40,15 @@ async def render_and_commit(
     if not repo_url:
         raise RuntimeError(f"No Git repository configured for category '{repo_category}'")
 
-    strategy = (
-        merge_strategy
-        or (settings.resource_merge_strategy_map.get(repo_category) if settings.resource_merge_strategy_map_json else None)
-        or settings.default_git_merge_strategy
-    )
+    # Determine merge strategy preference hierarchy: explicit arg > per-category map > default
+    per_category_strategy = None
+    if settings.resource_merge_strategy_map_json:
+        try:
+            per_category_strategy = json.loads(settings.resource_merge_strategy_map_json).get(repo_category)
+        except json.JSONDecodeError:
+            logger.warning("Invalid JSON in RESOURCE_MERGE_STRATEGY_MAP_JSON env var – ignoring")
+
+    strategy = merge_strategy or per_category_strategy or settings.default_git_merge_strategy
 
     commit_msg = format_commit_message(
         f"GitOps: update {relative_path}",
