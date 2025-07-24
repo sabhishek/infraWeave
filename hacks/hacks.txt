@@ -15,3 +15,11 @@ async def main():
 
 asyncio.run(main())
 PY
+
+--------------
+RESOURCE_REPO_MAP_JSON='{"compute/vms":"https://github.com/sabhishek/ocp-resources-gitops.git"}'
+# choose PR or direct merge
+RESOURCE_MERGE_STRATEGY_MAP_JSON='{"compute/vms":"pr"}'
+TEMPLATE_REPO_MAP_JSON='{
+  "compute/vms": "https://github.com/sabhishek/infra-templates.git"
+}'
