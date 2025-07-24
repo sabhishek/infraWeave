@@ -7,12 +7,11 @@ from typing import Dict
 
 from temporalio import activity
 
-from ..config import get_settings
-from ..gitops.git_writer import commit_change, format_commit_message
+
+
 from ..gitops.templater import render_template
 
 logger = logging.getLogger(__name__)
-settings = get_settings()
 
 
 @activity.defn
@@ -28,6 +27,12 @@ async def render_and_commit(
     Returns commit SHA (direct) or branch name (PR).
     """
     logger.info("[GitOps] Rendering %s for repo category %s", template_name, repo_category)
+        # Import heavy / env-dependent modules lazily so they run in the activity
+    from ..config import get_settings
+    from ..gitops.git_writer import commit_change, format_commit_message
+
+    settings = get_settings()
+
     manifest = render_template(template_name, context)
 
     repo_url = settings.resource_repo_map.get(repo_category)
@@ -36,7 +41,7 @@ async def render_and_commit(
 
     strategy = (
         merge_strategy
-        or settings.resource_merge_strategy_map_json and settings.resource_merge_strategy_map.get(repo_category)  # type: ignore[attr-defined]
+        or (settings.resource_merge_strategy_map.get(repo_category) if settings.resource_merge_strategy_map_json else None)
         or settings.default_git_merge_strategy
     )
 
