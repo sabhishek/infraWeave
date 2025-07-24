@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from typing import Dict, Optional, Any
+from datetime import timedelta
 
 from temporalio import workflow
 
@@ -40,7 +41,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         await workflow.execute_activity(
             mon_act.record_job_status,
             args=[job_id, "running", f"Category: {category}"],
-            schedule_to_close_timeout=60,
+            schedule_to_close_timeout=timedelta(seconds=60),
         )
         
 
@@ -48,7 +49,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         await workflow.execute_activity(
             apis_act.call_external_api,
             args=["pre_checks", {"category": category, "payload": payload}],
-            schedule_to_close_timeout=60,
+            schedule_to_close_timeout=timedelta(seconds=60),
         )
 
         git_result: Optional[str] = None
@@ -63,21 +64,21 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
                     f"{tenant_id}/{payload.get('name', 'resource')}.yaml",
                     None,
                 ],
-                schedule_to_close_timeout=300,
+                schedule_to_close_timeout=timedelta(seconds=300),
             )
 
         # External API calls if needed (stub)
         api_result = await workflow.execute_activity(
             apis_act.call_external_api,
             args=["resource_api", payload],
-            schedule_to_close_timeout=300,
+            schedule_to_close_timeout=timedelta(seconds=300),
         )
 
         # Wait / poll – simulated by a monitoring activity
         await workflow.execute_activity(
             mon_act.record_job_status,
             args=[job_id, "completed", str(api_result or git_result)],
-            schedule_to_close_timeout=60,
+            schedule_to_close_timeout=timedelta(seconds=60),
         )
 
         logger.info("[WF] Job %s completed", job_id)
