@@ -54,13 +54,13 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
 
         git_result: Optional[str] = None
         if "k8s" in category or "storage" in category or "compute" in category:
-            # Assume GitOps path for these; in real dispatch we’d ask handler
+            # Assume GitOps path for these; using full category for repo lookup
             git_result = await workflow.execute_activity(
                 gitops_act.render_and_commit,
                 args=[
                     f"{category}.yaml.j2",
                     {"vm": {"name": params.get("name", payload.get("name", "resource")), **payload}},
-                    category.split("/")[0],
+                    category,
                     f"{tenant_id}/{payload.get('name', 'resource')}.yaml",
                     None,
                 ],
