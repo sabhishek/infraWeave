@@ -80,7 +80,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
             mon_act.record_job_status,
             job_id,
             "completed",
-            message=str(api_result or git_result),
+            str(api_result or git_result),
             schedule_to_close_timeout=60,
         )
 
