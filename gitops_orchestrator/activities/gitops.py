@@ -9,7 +9,7 @@ from temporalio import activity
 
 
 
-from ..gitops.templater import render_template
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,13 @@ async def render_and_commit(
     Returns commit SHA (direct) or branch name (PR).
     """
     logger.info("[GitOps] Rendering %s for repo category %s", template_name, repo_category)
-        # Import heavy / env-dependent modules lazily so they run in the activity
+    # Import heavy / env-dependent modules lazily so they run in the activity
     from ..config import get_settings
     from ..gitops.git_writer import commit_change, format_commit_message
 
     settings = get_settings()
 
+    from ..gitops.templater import render_template
     manifest = render_template(template_name, context)
 
     repo_url = settings.resource_repo_map.get(repo_category)
