@@ -45,13 +45,13 @@ async def _start_job(
     # Kick off workflow
     await temporal.start_workflow(
         JobWorkflow.run,
+        str(job.id),        # job_id
+        str(tenant_id),     # tenant_id
+        category,           # resource category
+        job_type,           # job type
+        payload,            # payload dict
         id=str(job.id),
         task_queue="gitops-jobs",
-        job_id=str(job.id),
-        tenant_id=str(tenant_id),
-        category=category,
-        job_type=job_type,
-        payload=payload,
     )
     return job
 
