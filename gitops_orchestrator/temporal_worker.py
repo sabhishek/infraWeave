@@ -38,6 +38,7 @@ async def main() -> None:  # noqa: D401
             gitops_act.render_and_commit,
             apis_act.call_external_api,
             mon_act.record_job_status,
+            apis_act.lookup_tenant_name,
         ],
     )
     logger.info("Starting Temporal worker on queue '%s'", settings.temporal_task_queue)
