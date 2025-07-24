@@ -67,7 +67,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
                     f"{category}.yaml.j2",
                     {"vm": {"name": params.get("name", payload.get("name", "resource")), **payload}},
                     category,
-                    f"{tenant_name}/{category.split('/')[-1]}/{payload.get('name', 'resource')}.yaml",
+                    f"{tenant_name}/{category.split('/')[-1]}/{params.get('name', payload.get('name', 'resource'))}.yaml",
                     None,
                 ],
                 schedule_to_close_timeout=timedelta(seconds=300),

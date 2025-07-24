@@ -31,5 +31,19 @@ async def lookup_tenant_name(tenant_id: str) -> str:  # noqa: D401
     return the ID unchanged so templates/path remain deterministic.
     """
     logger.info("[API] Looking up name for tenant %s", tenant_id)
-    # TODO: replace with real lookup
-    return tenant_id
+    from ..config import get_settings
+    import asyncpg
+
+    settings = get_settings()
+    conn = await asyncpg.connect(
+        host=settings.db_host,
+        port=settings.db_port,
+        database=settings.db_name,
+        user=settings.db_user,
+        password=settings.db_password,
+    )
+    try:
+        row = await conn.fetchrow("SELECT name FROM tenants WHERE id = $1", tenant_id)
+        return row["name"] if row else tenant_id
+    finally:
+        await conn.close()
