@@ -6,6 +6,13 @@ from typing import Dict, Optional, Any
 
 from temporalio import workflow
 
+# Allow modules that use non-deterministic constructs to load without sandbox checks
+workflow.register_passthrough_imports({
+    "gitops_orchestrator.activities.gitops",
+    "gitops_orchestrator.gitops.templater",
+    "jinja2",
+})
+
 
 from ..config import get_settings
 
@@ -50,6 +57,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
             message=f"Handler: {handler_name}",
             schedule_to_close_timeout=60,
         )
+        
 
         # Pre-checks via API activity
         await workflow.execute_activity(
