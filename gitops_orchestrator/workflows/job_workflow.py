@@ -59,7 +59,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
                 gitops_act.render_and_commit,
                 args=[
                     f"{category}.yaml.j2",
-                    payload,
+                    {"vm": payload},
                     category.split("/")[0],
                     f"{tenant_id}/{payload.get('name', 'resource')}.yaml",
                     None,
