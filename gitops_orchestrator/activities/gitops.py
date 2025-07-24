@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Any
 
 from temporalio import activity
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @activity.defn
 async def render_and_commit(
     template_name: str,
-    context: Dict[str, object],
+    context: Dict[str, Any],
     repo_category: str,
     relative_path: str,
     merge_strategy: str | None = None,
