@@ -41,7 +41,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
             mon_act.record_job_status,
             job_id,
             "running",
-            message=f"Category: {category}",
+            f"Category: {category}",
             schedule_to_close_timeout=60,
         )
         
