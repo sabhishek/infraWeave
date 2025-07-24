@@ -39,9 +39,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         # Record pending -> running (avoid importing heavy dispatcher in workflow)
         await workflow.execute_activity(
             mon_act.record_job_status,
-            job_id,
-            "running",
-            f"Category: {category}",
+            args=[job_id, "running", f"Category: {category}"],
             schedule_to_close_timeout=60,
         )
         
@@ -49,8 +47,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         # Pre-checks via API activity
         await workflow.execute_activity(
             apis_act.call_external_api,
-            "pre_checks",
-            {"category": category, "payload": payload},
+            args=["pre_checks", {"category": category, "payload": payload}],
             schedule_to_close_timeout=60,
         )
 
@@ -59,28 +56,27 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
             # Assume GitOps path for these; in real dispatch we’d ask handler
             git_result = await workflow.execute_activity(
                 "gitops_orchestrator.activities.gitops.render_and_commit",
-                template_name=f"{category}.yaml.j2",
-                context=payload,
-                repo_category=category.split("/")[0],  # top-level group
-                relative_path=f"{tenant_id}/{payload.get('name', 'resource')}.yaml",
-                merge_strategy=None,
+                args=[
+                    f"{category}.yaml.j2",
+                    payload,
+                    category.split("/")[0],
+                    f"{tenant_id}/{payload.get('name', 'resource')}.yaml",
+                    None,
+                ],
                 schedule_to_close_timeout=300,
             )
 
         # External API calls if needed (stub)
         api_result = await workflow.execute_activity(
             apis_act.call_external_api,
-            "resource_api",
-            payload,
+            args=["resource_api", payload],
             schedule_to_close_timeout=300,
         )
 
         # Wait / poll – simulated by a monitoring activity
         await workflow.execute_activity(
             mon_act.record_job_status,
-            job_id,
-            "completed",
-            str(api_result or git_result),
+            args=[job_id, "completed", str(api_result or git_result)],
             schedule_to_close_timeout=60,
         )
 
