@@ -27,6 +27,10 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
     ) -> str:
         job_id = params["job_id"]
         tenant_id = params["tenant_id"]
+
+        # ----- Activity imports (must precede first use) -----
+        from ..activities import apis as apis_act, monitoring as mon_act, gitops as gitops_act
+
         tenant_name = await workflow.execute_activity(
             apis_act.lookup_tenant_name,
             args=[tenant_id],
@@ -38,8 +42,6 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         self._job_id = job_id
         logger.info("[WF] Starting job %s (%s)", job_id, category)
 
-        # Import activities lazily to avoid sandbox issues
-        from ..activities import apis as apis_act, monitoring as mon_act, gitops as gitops_act
 
         # Record pending -> running (avoid importing heavy dispatcher in workflow)
         await workflow.execute_activity(
