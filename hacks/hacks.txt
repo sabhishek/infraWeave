@@ -1,0 +1,17 @@
+Till I fix alembic migrations, use the following commands:
+
+python - <<'PY'
+import asyncio
+
+# ① Make sure every model class is imported so it registers with Base.metadata
+import gitops_orchestrator.models  # noqa: F401
+
+from gitops_orchestrator.db.session import engine, Base
+
+async def main():
+    async with engine.begin() as conn:
+        # ② Run the DDL
+        await conn.run_sync(Base.metadata.create_all)
+
+asyncio.run(main())
+PY
