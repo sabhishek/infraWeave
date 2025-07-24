@@ -35,18 +35,13 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         # Import activities lazily to avoid sandbox issues
         from ..activities import monitoring as mon_act
         from ..activities import apis as apis_act
-        from ..dispatcher import get_handler_class  # lazy import to avoid sandbox issues
 
-        # Instantiate handler (meta only)
-        HandlerCls = get_handler_class(category)
-        handler_name = HandlerCls.__name__
-
-        # Record pending -> running
+        # Record pending -> running (avoid importing heavy dispatcher in workflow)
         await workflow.execute_activity(
             mon_act.record_job_status,
             job_id,
             "running",
-            message=f"Handler: {handler_name}",
+            message=f"Category: {category}",
             schedule_to_close_timeout=60,
         )
         
