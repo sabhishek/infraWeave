@@ -6,13 +6,6 @@ from typing import Dict, Optional, Any
 
 from temporalio import workflow
 
-# Allow modules that use non-deterministic constructs to load without sandbox checks
-workflow.register_passthrough_imports({
-    "gitops_orchestrator.activities.gitops",
-    "gitops_orchestrator.gitops.templater",
-    "jinja2",
-})
-
 
 from ..config import get_settings
 
@@ -42,7 +35,6 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         # Import activities lazily to avoid sandbox issues
         from ..activities import monitoring as mon_act
         from ..activities import apis as apis_act
-        from ..activities import gitops as gitops_act
         from ..dispatcher import get_handler_class  # lazy import to avoid sandbox issues
 
         # Instantiate handler (meta only)
@@ -71,7 +63,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         if "k8s" in category or "storage" in category or "compute" in category:
             # Assume GitOps path for these; in real dispatch we’d ask handler
             git_result = await workflow.execute_activity(
-                gitops_act.render_and_commit,
+                "gitops_orchestrator.activities.gitops.render_and_commit",
                 template_name=f"{category}.yaml.j2",
                 context=payload,
                 repo_category=category.split("/")[0],  # top-level group
