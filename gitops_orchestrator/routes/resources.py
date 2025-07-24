@@ -59,25 +59,25 @@ async def _start_job(
     return job
 
 
-@router.post("/{category}", response_model=JobSchema, status_code=status.HTTP_202_ACCEPTED)
+@router.post("/{category:path}", response_model=JobSchema, status_code=status.HTTP_202_ACCEPTED)
 async def create_resource(
     tenant_id: uuid.UUID,
-    category: ResourceCategory = Path(..., description="Resource category"),
+    category: str = Path(..., description="Resource category (e.g., compute/vms)"),
     body: ResourceCreateSchema = Depends(),
     db: AsyncSession = Depends(get_async_session),
 ):
     job = await _start_job(
-        temporal=temporal,
+        
         db=db,
         tenant_id=tenant_id,
-        category=category.value,
+        category=category,
         job_type="create",
         payload=body.payload,
     )
     return JobSchema.model_validate(job)
 
 
-@router.get("/{category}", response_model=List[ResourceSchema])
+@router.get("/{category:path}", response_model=List[ResourceSchema])
 async def list_resources(
     tenant_id: uuid.UUID,
     category: ResourceCategory,
@@ -88,7 +88,7 @@ async def list_resources(
     return [ResourceSchema.model_validate(r) for r in resources]
 
 
-@router.get("/{category}/{resource_id}", response_model=ResourceSchema)
+@router.get("/{category:path}/{resource_id}", response_model=ResourceSchema)
 async def get_resource(
     tenant_id: uuid.UUID,
     category: ResourceCategory,

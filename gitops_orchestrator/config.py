@@ -90,6 +90,9 @@ class AppSettings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+        # Permit env vars that don't correspond to explicit fields so optional
+        # feature flags do not break startup (e.g., future vars).
+        extra = "ignore"
 
     # ------------------------------------------------------------------
     # Derived / helper properties

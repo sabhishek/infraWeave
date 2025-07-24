@@ -1,0 +1,4 @@
+curl -X POST \
+  http://localhost:8000/api/v1/tenants/<tid>/resources/compute/vms \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"vm01","flavour":"standard","cpu":4,"memory":"8Gi","image":"ubuntu"}'
