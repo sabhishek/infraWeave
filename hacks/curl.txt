@@ -1,4 +1,12 @@
 curl -X POST \
-  http://localhost:8000/api/v1/tenants/<tid>/resources/compute/vms \
+  http://192.168.0.12:8000/api/v1/tenants/804864ec-71cd-49a1-9c50-12f7ef11e627/resources/compute/vms \
   -H 'Content-Type: application/json' \
-  -d '{"name":"vm01","flavour":"standard","cpu":4,"memory":"8Gi","image":"ubuntu"}'
+  -d '{
+        "name": "vm01",
+        "payload": {
+          "flavour": "standard",
+          "cpu": 4,
+          "memory": "8Gi",
+          "image": "ubuntu"
+        }
+      }'

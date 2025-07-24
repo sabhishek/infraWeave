@@ -127,8 +127,8 @@ class TenantSchema(BaseModel):
 
 class ResourceCreateSchema(BaseModel):
     name: str
-    category: ResourceCategory
     payload: Dict[str, Any]
+    category: Optional[ResourceCategory] | None = None
 
 
 class ResourceSchema(ResourceCreateSchema):
