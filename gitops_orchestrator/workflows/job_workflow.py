@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from temporalio import workflow
 
@@ -22,7 +22,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
     @workflow.run
     async def run(
         self,
-        params: Dict[str, object],
+        params: Dict[str, Any],
     ) -> str:
         job_id = params["job_id"]
         tenant_id = params["tenant_id"]
