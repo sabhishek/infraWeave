@@ -39,8 +39,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         logger.info("[WF] Starting job %s (%s)", job_id, category)
 
         # Import activities lazily to avoid sandbox issues
-        from ..activities import monitoring as mon_act
-        from ..activities import apis as apis_act, gitops as gitops_act
+        from ..activities import apis as apis_act, monitoring as mon_act, gitops as gitops_act
 
         # Record pending -> running (avoid importing heavy dispatcher in workflow)
         await workflow.execute_activity(
