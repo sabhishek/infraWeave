@@ -35,7 +35,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
 
         # Import activities lazily to avoid sandbox issues
         from ..activities import monitoring as mon_act
-        from ..activities import apis as apis_act
+        from ..activities import apis as apis_act, gitops as gitops_act
 
         # Record pending -> running (avoid importing heavy dispatcher in workflow)
         await workflow.execute_activity(
@@ -56,7 +56,7 @@ class JobWorkflow:  # noqa: D101 – Temporal workflow class
         if "k8s" in category or "storage" in category or "compute" in category:
             # Assume GitOps path for these; in real dispatch we’d ask handler
             git_result = await workflow.execute_activity(
-                "gitops_orchestrator.activities.gitops.render_and_commit",
+                gitops_act.render_and_commit,
                 args=[
                     f"{category}.yaml.j2",
                     payload,
