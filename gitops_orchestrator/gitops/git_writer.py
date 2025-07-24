@@ -49,7 +49,7 @@ async def commit_change(
         # Import GitPython lazily to avoid loading it during workflow sandbox initialization
         from git import Repo  # type: ignore[import-not-found]
 
-        repo = Repo.clone_from(repo_url, workdir, env=_git_env())
+        repo = Repo.clone_from(_with_auth(repo_url), workdir, env=_git_env())
         # Ensure we're on main
         if repo.head.is_detached:
             repo.git.checkout("-B", "main")
@@ -66,6 +66,8 @@ async def commit_change(
         repo.index.commit(commit_message)
 
         origin = repo.remotes.origin
+        # Ensure remote URL has auth for push too
+        origin.set_url(_with_auth(repo_url))
         origin.push(refspec=f"HEAD:{repo.active_branch.name}")
         logger.info("Pushed changes to %s (%s)", repo_url, repo.active_branch)
 
@@ -75,6 +77,13 @@ async def commit_change(
         raise GitOpsError(str(exc)) from exc
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
+
+
+def _with_auth(url: str) -> str:
+    """Return URL embedded with PAT credentials if using https and PAT provided."""
+    if url.startswith("https://") and settings.git_pat and settings.git_username:
+        return url.replace("https://", f"https://{settings.git_username}:{settings.git_pat}@")
+    return url
 
 
 def _git_env() -> dict[str, str]:
