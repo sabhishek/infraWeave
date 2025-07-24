@@ -8,7 +8,7 @@ from typing import Dict
 from temporalio import activity
 
 
-
+"""GitOps activities."""
 
 
 logger = logging.getLogger(__name__)
@@ -50,6 +50,8 @@ async def render_and_commit(
         f"GitOps: update {relative_path}",
         details=f"Template: {template_name}\nResource category: {repo_category}",
     )
+
+
 
     result = await commit_change(
         repo_url=repo_url,
