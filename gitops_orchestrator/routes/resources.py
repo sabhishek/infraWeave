@@ -63,7 +63,7 @@ async def _start_job(
 async def create_resource(
     tenant_id: uuid.UUID,
     category: str = Path(..., description="Resource category (e.g., compute/vms)"),
-    body: ResourceCreateSchema = Depends(),
+    body: ResourceCreateSchema = Body(...),
     db: AsyncSession = Depends(get_async_session),
 ):
     job = await _start_job(
